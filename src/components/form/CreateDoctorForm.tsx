@@ -86,6 +86,7 @@ const DoctorForm: React.FC<DoctorFormProps> = ({ doctorId }) => {
         onChange={(e) => setEmail(e.target.value)}
         required
       />
+
       <Button
         className="bg-teal-500 text-white hover:bg-teal-600 hover:text-white"
         type="submit"

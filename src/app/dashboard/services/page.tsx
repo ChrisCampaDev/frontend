@@ -109,6 +109,7 @@ const ServicesPage = () => {
       <Sidebar />
       <div className="ml-64 p-2">
         <h2 className="text-2xl font-bold mb-4">Servicios</h2>
+        <Modal select={false} texto="Crear" color="bg-teal-500" />
         <Table>
           <TableHeader>
             <TableRow>
@@ -135,9 +136,6 @@ const ServicesPage = () => {
                   >
                     Asignar Doctor
                   </button>
-                </TableCell>
-                <TableCell>
-                  <Modal select={false} texto="Crear" color="bg-teal-500" />
                 </TableCell>
                 <TableCell>
                   <Modal

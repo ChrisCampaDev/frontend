@@ -11,7 +11,8 @@ interface ServiceFormProps {
 const ServiceForm: React.FC<ServiceFormProps> = ({ serviceId }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [doctorId, setDoctorId] = useState(""); // ID del doctor asignado
+  const [doctorId, setDoctorId] = useState("");
+  const [category, setCategory] = useState("");
   const router = useRouter();
 
   // Cargar los datos del servicio si se proporciona un ID
@@ -22,8 +23,9 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ serviceId }) => {
           const response = await axios.get(
             `http://localhost:4000/api/services/${serviceId}`
           );
-          const { name, description, doctorId } = response.data;
+          const { name, description, category, doctorId } = response.data;
           setName(name);
+          setCategory(category);
           setDescription(description);
           setDoctorId(doctorId || ""); // Manejar casos donde doctorId es null
         } catch (error) {
@@ -37,8 +39,6 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ serviceId }) => {
 
   // Manejador de envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log(e);
-
     e.preventDefault();
     try {
       if (serviceId) {
@@ -46,12 +46,14 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ serviceId }) => {
         await axios.patch(`http://localhost:4000/api/services/${serviceId}`, {
           name,
           description,
+          category,
           doctorId: doctorId || null, // Enviar null si no hay doctor asignado
         });
       } else {
         await axios.post("http://localhost:4000/api/services", {
           name,
           description,
+          category,
           doctorId: doctorId || null, // Enviar null si no hay doctor asignado
         });
       }
@@ -79,6 +81,14 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ serviceId }) => {
         placeholder="Descripción"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
+        required
+      />
+      {/* Campo de Categoría */}
+      <Input
+        type="text"
+        placeholder="Categoría"
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
         required
       />
 
