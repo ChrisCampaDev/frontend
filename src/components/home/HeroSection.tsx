@@ -32,7 +32,7 @@ const HeroSection: React.FC = () => {
       </div>
       <div className="md:w-1/2">
         <Image
-          src="/next.svg"
+          src="/Medico1.png"
           alt="Healthcare Image"
           width={500}
           height={300}

@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Layout from "../../components/home/layout";
+import Layout from "@/components/home/layout";
 import {
   Card,
   CardHeader,
@@ -16,41 +16,29 @@ interface Service {
   id: number;
   name: string;
   description: string;
+  category: string;
   doctor: { id: number; name: string };
-}
-
-interface Doctor {
-  id: number;
-  name: string;
 }
 
 const ServicesPage = () => {
   const [services, setServices] = useState<Service[]>([]);
-  const [doctors, setDoctors] = useState<Doctor[]>([]);
-  const [selectedDoctorId, setSelectedDoctorId] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
 
+  // Efecto inicial para cargar todos los servicios
   useEffect(() => {
-    fetchDoctors();
     fetchServices();
   }, []);
 
+  // Efecto para manejar el cambio de categoría seleccionada
   useEffect(() => {
-    if (selectedDoctorId) {
-      fetchFilteredServices(selectedDoctorId);
+    if (selectedCategory) {
+      fetchFilteredServices(selectedCategory);
     } else {
       fetchServices();
     }
-  }, [selectedDoctorId]);
+  }, [selectedCategory]);
 
-  const fetchDoctors = async () => {
-    try {
-      const response = await axios.get("http://localhost:4000/api/doctors");
-      setDoctors(response.data);
-    } catch (error) {
-      console.error("Error al obtener doctores:", error);
-    }
-  };
-
+  // Función para obtener todos los servicios
   const fetchServices = async () => {
     try {
       const response = await axios.get("http://localhost:4000/api/services");
@@ -60,14 +48,15 @@ const ServicesPage = () => {
     }
   };
 
-  const fetchFilteredServices = async (doctorId: string) => {
+  // Función para filtrar servicios por categoría
+  const fetchFilteredServices = async (category: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/api/services?doctorId=${doctorId}`
+        `http://localhost:4000/api/services/filter/${category}`
       );
-      setServices(response.data);
+      setServices(response.data); // Actualiza el estado con los servicios filtrados
     } catch (error) {
-      console.error("Error al filtrar servicios:", error);
+      console.error("Error al filtrar servicios por categoría:", error);
     }
   };
 
@@ -78,17 +67,19 @@ const ServicesPage = () => {
           Nuestros Servicios
         </h2>
 
-        {/* Selector de Doctor */}
+        {/* Selector de Categoría */}
         <div className="mb-8 flex justify-center">
           <select
-            value={selectedDoctorId}
-            onChange={(e) => setSelectedDoctorId(e.target.value)}
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
             className="w-full md:w-1/2 px-3 py-2 border rounded"
           >
-            <option value="">Todos los Doctores</option>
-            {doctors.map((doctor) => (
-              <option key={doctor.id} value={doctor.id}>
-                {doctor.name}
+            <option value="">Todas las categorías</option>
+            {Array.from(
+              new Set(services.map((service) => service.category))
+            ).map((category) => (
+              <option key={category} value={category}>
+                {category}
               </option>
             ))}
           </select>
@@ -100,7 +91,7 @@ const ServicesPage = () => {
             <Card key={service.id} className="shadow-md">
               <CardHeader>
                 <CardTitle>{service.name}</CardTitle>
-                <CardDescription>{service.doctor.name}</CardDescription>
+                <CardDescription>{service.category}</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700">{service.description}</p>

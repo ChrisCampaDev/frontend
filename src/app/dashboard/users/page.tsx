@@ -28,12 +28,26 @@ const UsersPage = () => {
     fetchUsers();
   }, []);
 
+  // Función para obtener todos los usuarios
   const fetchUsers = async () => {
     try {
       const response = await axios.get("http://localhost:4000/api/usuarios");
       setUsers(response.data);
     } catch (error) {
       console.error("Error al obtener usuarios:", error);
+    }
+  };
+
+  // Función para cambiar el rol de un usuario a "admin"
+  const makeAdmin = async (userId: number) => {
+    try {
+      await axios.patch(`http://localhost:4000/api/usuarios/${userId}`, {
+        role: "admin",
+      });
+      // Actualiza la lista de usuarios después de cambiar el rol
+      fetchUsers();
+    } catch (error) {
+      console.error("Error al cambiar el rol del usuario:", error);
     }
   };
 
@@ -48,6 +62,7 @@ const UsersPage = () => {
               <TableHead>Nombre</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Rol</TableHead>
+              <TableHead>Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -56,6 +71,16 @@ const UsersPage = () => {
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.role}</TableCell>
+                <TableCell>
+                  {user.role !== "ADMIN" && (
+                    <button
+                      onClick={() => makeAdmin(user.id)}
+                      className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
+                    >
+                      Hacer Admin
+                    </button>
+                  )}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -64,5 +89,4 @@ const UsersPage = () => {
     </LayoutAdmin>
   );
 };
-
 export default UsersPage;
